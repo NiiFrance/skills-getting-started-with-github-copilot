@@ -20,13 +20,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const spotsLeft = details.max_participants - details.participants.length;
 
-        const participantsList = details.participants
-          .map(
-            (email) =>
-              `<li><span class="participant-email">${email}</span><button class="delete-btn" data-activity="${name}" data-email="${email}" title="Remove participant">&times;</button></li>`
-          )
-          .join("");
-
         activityCard.innerHTML = `
           <h4>${name}</h4>
           <p>${details.description}</p>
@@ -34,9 +27,42 @@ document.addEventListener("DOMContentLoaded", () => {
           <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
           <div class="participants-section">
             <strong>Participants:</strong>
-            ${details.participants.length ? `<ul class="participants-list">${participantsList}</ul>` : "<p class='no-participants'>No participants yet</p>"}
+            <div class="participants-container"></div>
           </div>
         `;
+
+        const participantsContainer = activityCard.querySelector(".participants-container");
+
+        if (details.participants.length) {
+          const ul = document.createElement("ul");
+          ul.className = "participants-list";
+
+          details.participants.forEach((email) => {
+            const li = document.createElement("li");
+
+            const span = document.createElement("span");
+            span.className = "participant-email";
+            span.textContent = email;
+
+            const button = document.createElement("button");
+            button.className = "delete-btn";
+            button.dataset.activity = name;
+            button.dataset.email = email;
+            button.title = "Remove participant";
+            button.textContent = "×";
+
+            li.appendChild(span);
+            li.appendChild(button);
+            ul.appendChild(li);
+          });
+
+          participantsContainer.appendChild(ul);
+        } else {
+          const noParticipants = document.createElement("p");
+          noParticipants.className = "no-participants";
+          noParticipants.textContent = "No participants yet";
+          participantsContainer.appendChild(noParticipants);
+        }
 
         activitiesList.appendChild(activityCard);
 
